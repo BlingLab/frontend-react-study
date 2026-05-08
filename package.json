@@ -1,0 +1,40 @@
+{
+  "name": "frontend-react-study",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "예제:전체": "vite --host 127.0.0.1 --open /",
+    "예제:기초": "vite --host 127.0.0.1 --open '/?example=jsx-components'",
+    "예제:초급": "vite --host 127.0.0.1 --open '/?example=props-state'",
+    "예제:중급": "vite --host 127.0.0.1 --open '/?example=effects-fetching'",
+    "예제:고급": "vite --host 127.0.0.1 --open '/?example=context-reducer'",
+    "예제:심화": "vite --host 127.0.0.1 --open '/?example=performance'",
+    "예제:컴포넌트": "vite --host 127.0.0.1 --open '/?example=jsx-components'",
+    "예제:state": "vite --host 127.0.0.1 --open '/?example=props-state'",
+    "예제:form": "vite --host 127.0.0.1 --open '/?example=events-forms'",
+    "예제:effect": "vite --host 127.0.0.1 --open '/?example=effects-fetching'",
+    "예제:hook": "vite --host 127.0.0.1 --open '/?example=custom-hooks'",
+    "예제:reducer": "vite --host 127.0.0.1 --open '/?example=context-reducer'",
+    "예제:성능": "vite --host 127.0.0.1 --open '/?example=performance'",
+    "미리보기:기초": "pnpm build && vite preview --host 127.0.0.1 --open '/?example=jsx-components'",
+    "미리보기:초급": "pnpm build && vite preview --host 127.0.0.1 --open '/?example=props-state'",
+    "미리보기:중급": "pnpm build && vite preview --host 127.0.0.1 --open '/?example=effects-fetching'",
+    "미리보기:고급": "pnpm build && vite preview --host 127.0.0.1 --open '/?example=context-reducer'",
+    "미리보기:심화": "pnpm build && vite preview --host 127.0.0.1 --open '/?example=performance'"
+  },
+  "dependencies": {
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.9.3",
+    "vite": "^4.5.14"
+  }
+}
