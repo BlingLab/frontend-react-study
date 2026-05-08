@@ -222,36 +222,6 @@ function Complex() {
 
 조건부 렌더링 패턴(`&&`, 삼항 연산자)은 [조건부 렌더링](./06-조건부-렌더링.md) 문서에서 자세히 다룹니다.
 
-## JSX를 읽는 순서
-
-낯선 JSX를 만나면 아래 순서로 읽으면 덜 헷갈립니다.
-
-1. 가장 바깥 element가 무엇인지 봅니다.
-2. `{}` 안에 들어간 값이 무엇인지 확인합니다.
-3. 조건부 렌더링이 있는지 봅니다.
-4. `map`으로 반복 렌더링하는 부분이 있는지 봅니다.
-5. 컴포넌트로 분리된 부분의 props를 확인합니다.
-
-예를 들어 아래 코드를 봅니다.
-
-```tsx
-function Header({ userName, unreadCount }: { userName: string; unreadCount: number }) {
-  return (
-    <header className="header">
-      <h1>{userName}님의 학습 공간</h1>
-      {unreadCount > 0 && <span>새 알림 {unreadCount}개</span>}
-    </header>
-  );
-}
-```
-
-읽는 순서는 이렇습니다.
-
-- 바깥은 `header`입니다.
-- 제목에는 `userName` 값이 들어갑니다.
-- `unreadCount > 0`일 때만 알림이 보입니다.
-- 알림 문구 안에도 `unreadCount` 값이 들어갑니다.
-
 ## 읽으면서 생각할 질문
 
 - `{}`안에 들어가는 값은 expression인가, statement인가?

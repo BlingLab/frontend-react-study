@@ -42,7 +42,7 @@ frontend-react-study/
 | 단계 | 문서 | 목표 |
 | --- | --- | --- |
 | 1 | [기초](./01-학습문서/01-기초/README.md) | JSX, 컴포넌트, props, 목록 렌더링 이해 |
-| 2 | [초급](./01-학습문서/02-초급/README.md) | state, event, form, 배열 업데이트 익히기 |
+| 2 | [초급](./01-학습문서/02-초급/README.md) | state, event, form, 배열 업데이트, state 위치 잡기 |
 | 3 | [중급](./01-학습문서/03-중급/README.md) | Effect, fetching, custom Hook 흐름 잡기 |
 | 4 | [고급](./01-학습문서/04-고급/README.md) | reducer, context, 상태 설계 기준 세우기 |
 | 5 | [심화](./01-학습문서/05-심화/README.md) | 렌더링, 성능, Suspense, Compiler 관점 이해 |

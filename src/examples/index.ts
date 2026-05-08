@@ -2,6 +2,7 @@ import { ContextReducerExample } from "./ContextReducerExample";
 import { CustomHooksExample } from "./CustomHooksExample";
 import { EffectsFetchingExample } from "./EffectsFetchingExample";
 import { EventsFormsExample } from "./EventsFormsExample";
+import { IntermediatePatternsExample } from "./IntermediatePatternsExample";
 import { JsxComponentsExample } from "./JsxComponentsExample";
 import { PerformanceExample } from "./PerformanceExample";
 import { PropsStateExample } from "./PropsStateExample";
@@ -42,6 +43,13 @@ export const examples: StudyExample[] = [
     summary: "반복되는 토글 상태 로직을 custom Hook으로 분리합니다.",
     curriculumPath: "01-학습문서/03-중급/03-custom-hook-만들기.md",
     Component: CustomHooksExample,
+  },
+  {
+    id: "intermediate-patterns",
+    title: "Intermediate Patterns",
+    summary: "계산값, ref, 필터 UI를 중급 패턴으로 정리합니다.",
+    curriculumPath: "01-학습문서/03-중급/06-derived-state와-계산값.md",
+    Component: IntermediatePatternsExample,
   },
   {
     id: "context-reducer",

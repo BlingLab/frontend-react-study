@@ -9,6 +9,7 @@ React 학습 중 판단이 애매할 때 돌아오는 기준점입니다.
 1. [공식문서](./공식문서.md): React, Vite, TypeScript, 테스트, 라우팅 공식 문서
 2. [도구](./도구.md): 현재 저장소에서 쓰는 도구와 나중에 추가할 도구
 3. [아티클](./아티클.md): 공식 문서 이후에 읽을 만한 보조 자료 기준
+4. [외부자료 리서치](./외부자료-리서치.md): 공개 커리큘럼, PDF, 블로그를 단계별로 분류한 자료
 
 ## 단계별로 볼 자료
 
@@ -17,7 +18,7 @@ React 학습 중 판단이 애매할 때 돌아오는 기준점입니다.
 | 기초 | React Learn의 Describing the UI, TypeScript with React |
 | 초급 | Adding Interactivity, Managing State |
 | 중급 | Synchronizing with Effects, You Might Not Need an Effect |
-| 고급 | Scaling Up with Reducer and Context, React API Reference |
+| 고급 | Scaling Up with Reducer and Context, React API Reference, TanStack Query |
 | 심화 | React Compiler, memo, useMemo, useCallback |
 | 실전 정리 | React Testing Library, Vite build, React Router |
 

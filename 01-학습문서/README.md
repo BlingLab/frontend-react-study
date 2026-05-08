@@ -4,16 +4,52 @@
 
 목표는 React API를 외우는 것이 아니라, UI를 상태의 결과로 설명하고 컴포넌트와 상태 흐름을 스스로 설계할 수 있게 되는 것입니다.
 
+## 커리큘럼 기준
+
+이 문서는 React 공식 문서, MDN React 튜토리얼, Full Stack Open, React TypeScript Cheatsheet, Patterns.dev, Kent C. Dodds와 Overreacted의 주요 글을 기준으로 단계 흐름을 잡습니다. 자세한 외부 자료 분류는 [03-참고자료](../03-참고자료/README.md)에서 확인합니다.
+
+React 학습은 API 목록을 외우는 방식으로 가면 쉽게 흩어집니다. 이 저장소는 다음 순서로 학습 흐름을 고정합니다.
+
+1. UI를 데이터의 결과로 설명합니다.
+2. 사용자 행동이 state를 바꾸고, state가 다시 UI를 만든다는 흐름을 익힙니다.
+3. React 안의 계산과 React 바깥 시스템 동기화를 구분합니다.
+4. 앱이 커질 때 상태의 성격과 위치를 분류합니다.
+5. 성능, 에러, 캐싱, 테스트를 기능 완성의 일부로 다룹니다.
+
+새 주제를 추가할 때는 먼저 "이 주제가 어느 단계의 문제를 해결하는가"를 판단합니다. 같은 API라도 처음에는 쉬운 관점으로 다루고, 뒤 단계에서 더 깊게 반복할 수 있습니다.
+
 ## 읽는 순서
 
 | 단계 | 주제 | 목표 |
 | --- | --- | --- |
 | 1 | [기초](./01-기초/README.md) | React를 읽기 위한 기본 문법과 컴포넌트 사고 잡기 |
-| 2 | [초급](./02-초급/README.md) | props, state, event, form으로 작은 UI 만들기 |
+| 2 | [초급](./02-초급/README.md) | state, event, form, 배열 업데이트로 작은 기능 만들기 |
 | 3 | [중급](./03-중급/README.md) | Effect, fetching, custom Hook으로 외부 흐름 다루기 |
 | 4 | [고급](./04-고급/README.md) | reducer, context, 상태 설계로 커지는 앱 정리하기 |
 | 5 | [심화](./05-심화/README.md) | 렌더링, 성능, Suspense, Compiler 관점 이해하기 |
 | 6 | [실전 정리](./06-실전정리/README.md) | 테스트, 배포, 면접 답변으로 학습 내용 정리하기 |
+
+## 단계별 분류 축
+
+| 축 | 먼저 배우는 단계 | 깊어지는 단계 |
+| --- | --- | --- |
+| UI 표현 | 기초 | 중급의 component composition |
+| 사용자 행동 | 초급 | 실전 정리의 테스트 |
+| 상태 설계 | 초급 | 고급의 reducer/context/server state |
+| 외부 시스템 | 중급 | 고급의 external store와 Error Boundary |
+| 성능 | 중급의 deferred UI | 심화의 렌더링 모델과 memoization |
+| 코드 운영 | 실전 정리 | 배포, 테스트, 면접 답변 |
+
+## 주제 배치 기준
+
+| 주제 | 배치 | 이유 |
+| --- | --- | --- |
+| JSX, props, 조건부/목록 렌더링 | 기초 | React 코드를 읽고 UI를 데이터로 표현하는 최소 단위 |
+| state, event, form, 배열 업데이트 | 초급 | 사용자의 행동으로 화면이 바뀌는 작은 기능의 기본기 |
+| Effect, ref, custom Hook, router, fetching | 중급 | React 바깥 시스템과 연결하고 반복 로직에 이름 붙이는 구간 |
+| reducer, context, server state, Error Boundary | 고급 | 앱이 커질 때 상태 성격, 전달 경계, 실패 복구를 다루는 구간 |
+| 렌더링 모델, Profiler, memoization, Compiler | 심화 | 성능을 측정하고 필요한 최적화만 선택하는 구간 |
+| 테스트, 배포, 디버깅, PR 설명 | 실전 정리 | 만든 기능을 검증하고 다른 사람에게 설명 가능한 상태로 마무리하는 구간 |
 
 ## 학습 방식
 

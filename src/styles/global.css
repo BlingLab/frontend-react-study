@@ -36,6 +36,11 @@ button:hover {
   border-color: #50756a;
 }
 
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
 input {
   width: 100%;
   border: 1px solid #c9d4ce;
@@ -211,6 +216,60 @@ input {
 .done {
   color: #789087;
   text-decoration: line-through;
+}
+
+.active-filter {
+  border-color: #2f6558;
+  background: #e6f0ec;
+  color: #2f6558;
+}
+
+.toggle-line {
+  display: inline-flex;
+  gap: 0.45rem;
+  align-items: center;
+  border: 1px solid #dce4df;
+  border-radius: 6px;
+  background: #ffffff;
+  padding: 0.65rem 0.85rem;
+}
+
+.toggle-line input {
+  width: auto;
+}
+
+.summary-card {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.summary-card strong {
+  font-size: 1.6rem;
+}
+
+.inline-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+  color: #60736d;
+  font-size: 0.9rem;
+}
+
+.neutral-pill {
+  background: #edf0ee;
+  color: #60736d;
+}
+
+.empty-state {
+  border: 1px dashed #b8c8c0;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 1.25rem;
+}
+
+.empty-state h3 {
+  margin-top: 0;
 }
 
 .error-message {

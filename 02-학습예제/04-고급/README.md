@@ -5,6 +5,13 @@
 - [고급 문서](../../01-학습문서/04-고급/README.md)
 - [Reducer로 변경 규칙 모으기](../../01-학습문서/04-고급/01-reducer로-변경규칙-모으기.md)
 - [Context를 필요한 만큼 쓰기](../../01-학습문서/04-고급/02-context를-필요한만큼-쓰기.md)
+- [State를 분류하고 배치하기](../../01-학습문서/04-고급/03-state를-분류하고-배치하기.md)
+- [Transition과 pending UI](../../01-학습문서/04-고급/04-transition과-pending-UI.md)
+- [useSyncExternalStore와 외부 store](../../01-학습문서/04-고급/05-useSyncExternalStore와-외부-store.md)
+- [Error Boundary로 렌더링 오류 다루기](../../01-학습문서/04-고급/06-error-boundary로-렌더링-오류-다루기.md)
+- [Optimistic UI 설계하기](../../01-학습문서/04-고급/07-optimistic-UI-설계하기.md)
+- [Server state와 Query cache](../../01-학습문서/04-고급/08-server-state와-query-cache.md)
+- [useEffectEvent와 비반응 로직](../../01-학습문서/04-고급/09-useEffectEvent와-비반응-로직.md)
 
 ## 실행 명령
 
@@ -28,3 +35,8 @@ pnpm run 미리보기:고급
 - action 이름을 사용자 의도 중심으로 바꿔봅니다.
 - Context provider 범위가 어디까지 필요한지 확인합니다.
 - state context와 dispatch context가 왜 분리되어 있는지 설명합니다.
+- pending UI를 전체 화면에 둘지 부분 영역에 둘지 판단해 봅니다.
+- Error Boundary가 잡는 오류와 잡지 못하는 오류를 구분합니다.
+- optimistic update가 실패했을 때 되돌릴 수 있는지 설계해 봅니다.
+- 같은 서버 데이터를 여러 컴포넌트가 요청한다면 query cache가 필요한지 판단합니다.
+- Effect dependency를 줄이고 싶을 때 구조 변경과 `useEffectEvent` 중 무엇이 맞는지 비교합니다.

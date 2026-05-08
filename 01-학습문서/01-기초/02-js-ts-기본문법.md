@@ -2,26 +2,6 @@
 
 React가 어렵게 느껴지는 이유 중 상당수는 React 자체보다 JavaScript 문법 때문입니다. 아래 문법들은 React 코드를 읽다 보면 계속 나오므로, 각 패턴이 어떤 상황에 쓰이는지 감을 잡아두면 좋습니다.
 
-## 이 문서를 읽는 이유
-
-React 예제를 열었는데 아래처럼 보이면 처음에는 낯설 수 있습니다.
-
-```tsx
-function SkillList({ skills }: { skills: string[] }) {
-  return (
-    <ul>
-      {skills.map((skill) => (
-        <li key={skill}>{skill}</li>
-      ))}
-    </ul>
-  );
-}
-```
-
-이 코드는 React만 알아서는 읽기 어렵습니다. destructuring, TypeScript 타입, `map`, arrow function, JSX expression이 한꺼번에 들어 있기 때문입니다.
-
-그래서 이 문서는 문법을 외우기 위한 문서가 아니라, React 코드를 읽다가 멈추지 않기 위한 준비 문서입니다.
-
 ## const와 let
 
 `const`는 재할당하지 않는 값에 씁니다. 컴포넌트 안의 대부분의 변수는 `const`입니다.

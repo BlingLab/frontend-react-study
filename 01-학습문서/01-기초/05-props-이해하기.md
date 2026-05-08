@@ -4,8 +4,6 @@
 
 Props는 **부모 컴포넌트가 자식 컴포넌트에게 전달하는 입력값**입니다.
 
-컴포넌트를 함수처럼 생각하면 props는 함수의 인자입니다. 같은 props가 들어오면 같은 UI가 나와야 예측하기 쉽습니다.
-
 ```tsx
 // 부모
 function App() {
@@ -101,8 +99,6 @@ function ProfileCard({ name, role, followerCount }: ProfileCardProps) {
 // 필수 props를 빠뜨리면 편집기가 경고
 <ProfileCard name="Mina" role="Frontend" />  // followerCount 빠짐 → 오류 표시
 ```
-
-Props 타입은 컴포넌트의 사용 설명서입니다. 구현을 보기 전에 타입만 봐도 어떤 값을 넘겨야 하는지 알 수 있어야 합니다.
 
 ```tsx
 type SkillListProps = {
@@ -282,28 +278,6 @@ function UserCard({ user }: { user: User }) {
 **props 이름에 HTML 속성과 충돌하는 이름 쓰기**
 
 `class`, `for` 등은 JSX에서 사용할 수 없습니다. `className`, `htmlFor`로 씁니다.
-
-## Props를 읽는 연습
-
-아래 타입을 보고 컴포넌트가 어떤 UI일지 상상해봅니다.
-
-```tsx
-type StudyCardProps = {
-  title: string;
-  level: "기초" | "초급" | "중급";
-  completed: boolean;
-  tags: string[];
-};
-```
-
-이 타입만 봐도 몇 가지를 알 수 있습니다.
-
-- 카드 제목이 있습니다.
-- 난이도는 세 가지 중 하나입니다.
-- 완료 여부에 따라 UI가 달라질 수 있습니다.
-- 태그 목록을 렌더링할 가능성이 높습니다.
-
-Props 타입을 읽는 연습은 컴포넌트 구현을 빠르게 이해하는 데 큰 도움이 됩니다.
 
 ## 읽으면서 생각할 질문
 
