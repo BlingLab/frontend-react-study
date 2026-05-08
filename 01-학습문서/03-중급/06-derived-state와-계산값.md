@@ -185,3 +185,7 @@ function ProfileRoute({ userId }: { userId: string }) {
 - `useMemo`가 필요한 실제 비용이 있는가?
 - `useEffect` 안에서 계산값을 setState로 동기화하고 있지는 않은가?
 - state 이름이 계산 결과처럼 들리지는 않는가?
+
+## 이전 단계 참고
+
+- [초급 — 파생 State와 계산값](../02-초급/05-파생-state와-계산값.md): 계산값과 state를 나누는 기본 원칙을 먼저 익힙니다.
