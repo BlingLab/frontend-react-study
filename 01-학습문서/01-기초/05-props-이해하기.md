@@ -53,15 +53,13 @@ function Counter({ count }: { count: number }) {
 }
 ```
 
-자식이 값을 바꿔야 한다면, 부모에서 변경 함수를 만들어 props로 함께 내려줍니다. (이 패턴은 초급 단계에서 state와 이벤트를 배울 때 자세히 다룹니다.)
-
-예를 들어 부모가 선택된 id를 가지고 있고, 자식은 클릭이 일어났다는 사실만 알려줄 수 있습니다.
+자식이 값을 바꿔야 한다면, 부모에서 변경 함수를 만들어 props로 함께 내려줍니다.
 
 ```tsx
 type UserItemProps = {
-  id: number;
+  id: string;
   name: string;
-  onSelect: (id: number) => void;
+  onSelect: (id: string) => void;
 };
 
 function UserItem({ id, name, onSelect }: UserItemProps) {
@@ -74,6 +72,23 @@ function UserItem({ id, name, onSelect }: UserItemProps) {
 ```
 
 자식은 `selectedId`를 직접 바꾸지 않습니다. 대신 `onSelect(id)`를 호출해서 부모에게 "이 사용자가 선택됐다"고 알립니다.
+
+## 단방향 데이터 흐름
+
+React에서 데이터는 항상 **위에서 아래로(부모 → 자식)** 흐릅니다. 이것을 단방향 데이터 흐름(Unidirectional Data Flow)이라고 합니다.
+
+```
+App
+ └── UserList        ← users, onSelect 전달받음
+      └── UserItem   ← user, onSelect 전달받음
+```
+
+자식에서 위로 올라가는 것은 데이터가 아니라 **이벤트(알림)**입니다. 자식은 "무언가 일어났다"는 사실만 부모에게 알리고, 실제 데이터 변경은 부모가 합니다.
+
+이 제약이 오히려 코드를 예측 가능하게 만듭니다.
+
+- "이 데이터는 어디서 오는가?" → 부모를 따라 올라가면 찾을 수 있습니다.
+- "이 데이터가 바뀌면 어떤 컴포넌트가 영향을 받는가?" → 그 데이터를 전달받는 자식들입니다.
 
 ## TypeScript로 Props 타입 정의하기
 
@@ -212,8 +227,8 @@ Props에는 문자열과 숫자뿐 아니라 배열, 객체, 함수도 전달할
 
 ```tsx
 type UserListProps = {
-  users: { id: number; name: string }[];
-  onSelect: (id: number) => void;
+  users: { id: string; name: string }[];
+  onSelect: (id: string) => void;
 };
 
 function UserList({ users, onSelect }: UserListProps) {
@@ -235,7 +250,7 @@ function UserList({ users, onSelect }: UserListProps) {
 
 ```tsx
 type User = {
-  id: number;
+  id: string;
   name: string;
   role: string;
 };
@@ -259,6 +274,31 @@ function UserCard({ user }: { user: User }) {
 
 `UserCard`처럼 사용자 객체 자체가 자연스러운 단위라면 객체 전체가 괜찮습니다. 하지만 컴포넌트가 실제로 이름과 역할만 필요하다면 필요한 값만 넘기는 편이 의존성이 작습니다.
 
+## Props 전달을 추적하는 방법
+
+코드를 읽을 때 props가 어디서 오는지 추적하는 습관이 중요합니다.
+
+1. 컴포넌트가 받는 props 타입을 먼저 봅니다.
+2. 이 컴포넌트를 사용하는 부모를 찾습니다.
+3. 부모가 props를 어떻게 준비해서 전달하는지 봅니다.
+
+이 방향으로 읽으면 "이 값은 어디서 왔는가"를 빠르게 찾을 수 있습니다.
+
+## Prop Drilling
+
+데이터가 여러 단계를 거쳐 내려가야 할 때 중간 컴포넌트들이 자신은 쓰지 않는 props를 단지 전달하기 위해 받아야 하는 상황이 생깁니다. 이를 prop drilling이라고 합니다.
+
+```
+App (selectedId 보유)
+ └── Layout
+      └── Sidebar
+           └── UserList (onSelect 필요)
+```
+
+`Layout`과 `Sidebar`가 `selectedId`나 `onSelect`를 쓰지 않는데도 전달만 하기 위해 props로 받아야 합니다.
+
+이 문제는 고급 단계에서 Context를 배울 때 다룹니다. 기초 단계에서는 "이런 상황이 생길 수 있다"는 것을 인식하면 됩니다.
+
 ## 흔한 실수
 
 **문자열 props에 `{}` 쓰기 — 틀린 건 아니지만 관례에 맞지 않음**
@@ -279,9 +319,23 @@ function UserCard({ user }: { user: User }) {
 
 `class`, `for` 등은 JSX에서 사용할 수 없습니다. `className`, `htmlFor`로 씁니다.
 
+**함수를 props로 전달할 때 즉시 호출하기**
+
+```tsx
+// 오류: 렌더링할 때 바로 실행됨
+<Button onClick={handleClick()} />
+
+// 올바름: 클릭했을 때 실행되는 함수를 전달
+<Button onClick={handleClick} />
+
+// 인자가 필요하면 arrow function으로 감싸기
+<Button onClick={() => handleClick(id)} />
+```
+
 ## 읽으면서 생각할 질문
 
 - 이 props는 어디에서 내려오는가?
 - 자식이 props를 바꾸려고 하고 있지는 않은가?
 - 필수 props와 optional props를 구분할 수 있는가?
 - children이 적합한 상황과 일반 props가 적합한 상황의 차이는 무엇인가?
+- 단방향 데이터 흐름이 이 컴포넌트에서 어떻게 지켜지고 있는가?

@@ -2,7 +2,7 @@
 
 앱이 커지면 "이 값을 어디에 두어야 하나?"라는 질문이 더 자주 생깁니다. 도구를 먼저 고르기보다 state의 성격을 먼저 분류하는 편이 낫습니다.
 
-## 세 가지 분류
+## 네 가지 분류
 
 ### 1. Local UI State
 
@@ -72,13 +72,44 @@ const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
 
 **도구**: React Query(TanStack Query), SWR, RTK Query
 
+### 4. URL State
+
+현재 URL(경로, 쿼리 파라미터, 해시)에 담긴 상태입니다. 브라우저 뒤로가기, 링크 공유, 북마크가 필요한 값은 URL에 둡니다.
+
+```tsx
+// 검색어 → URL에 있어야 링크 공유 가능
+// /search?q=react&page=2
+
+// 현재 탭 → URL에 있어야 새로고침 후에도 유지
+// /settings?tab=notifications
+
+// 모달 열림 → 뒤로가기로 닫을 수 있으면 URL
+// /posts/123?preview=true
+```
+
+```tsx
+// React Router v6
+const [searchParams, setSearchParams] = useSearchParams();
+const keyword = searchParams.get("q") ?? "";
+const page = Number(searchParams.get("page") ?? "1");
+
+function handleSearch(q: string) {
+  setSearchParams({ q, page: "1" });
+}
+```
+
+URL state는 local state처럼 쓰이지만, 새로고침이나 링크 공유 후에도 값이 살아있어야 할 때 사용합니다.
+
+**도구**: `useSearchParams` (React Router), `useRouter` (Next.js)
+
 ## 분류 판단표
 
 | 값 | 분류 | 이유 |
 | --- | --- | --- |
 | 모달 열림 여부 | Local UI | 그 컴포넌트만 앎 |
 | 검색 input 값 | Local UI | URL에 없으면 그 화면만 앎 |
-| 선택된 탭 | Local UI (URL 연동 가능) | 한 화면 안에서만 필요 |
+| 선택된 탭 | Local UI 또는 URL | 새로고침 후 유지가 필요하면 URL |
+| 필터/페이지 | URL | 링크 공유, 뒤로가기가 자연스러워야 함 |
 | 로그인 사용자 | Shared Client | 헤더, 설정, 게시글 작성 등 여럿이 읽음 |
 | 장바구니 | Shared Client | 상품 목록, 헤더 뱃지, 결제 화면이 공유 |
 | 게시글 목록 | Server State | 서버가 source of truth |
@@ -171,19 +202,47 @@ function PostPage({ postId }: { postId: string }) {
 - 여러 화면에서 같은 데이터를 각자 따로 요청합니다.
 - stale 데이터를 계속 보여줄 수 있습니다.
 
+**URL state를 local state로 다루면:**
+- 새로고침하면 값이 초기화됩니다.
+- 링크를 공유해도 같은 화면이 보이지 않습니다.
+- 뒤로가기가 기대와 다르게 동작합니다.
+
 ## state 설계 순서
 
 1. 이 값이 서버 데이터인가? → server state 도구 또는 Effect + useState
-2. 한 컴포넌트에서만 쓰는가? → 그 컴포넌트 안 local state
-3. 여러 컴포넌트가 공유하는가? → 공통 부모로 올리거나 Context
-4. props drilling이 깊어지는가? → Context 또는 Composition 검토
+2. 새로고침/링크 공유/뒤로가기가 필요한가? → URL state
+3. 한 컴포넌트에서만 쓰는가? → 그 컴포넌트 안 local state
+4. 여러 컴포넌트가 공유하는가? → 공통 부모로 올리거나 Context
+5. props drilling이 깊어지는가? → Context 또는 Composition 검토
 
 순서가 중요합니다. 처음부터 전역 상태 도구로 가기보다 필요에 따라 단계적으로 범위를 넓힙니다.
 
+## 파생 state는 state가 아니다
+
+`useState`로 저장할 필요가 없는 값이 있습니다. 다른 state나 props에서 계산할 수 있는 값은 파생 state(derived state)입니다.
+
+```tsx
+// 나쁜 예: 파생 state를 useEffect로 동기화
+const [todos, setTodos] = useState<Todo[]>([]);
+const [completedCount, setCompletedCount] = useState(0);
+
+useEffect(() => {
+  setCompletedCount(todos.filter((t) => t.done).length);
+}, [todos]);
+
+// 좋은 예: 렌더링 중 직접 계산
+const [todos, setTodos] = useState<Todo[]>([]);
+const completedCount = todos.filter((t) => t.done).length;
+```
+
+파생 state를 따로 `useState`로 관리하면 source of truth가 두 개가 되어 어긋날 위험이 생깁니다.
+
 ## 읽으면서 생각할 질문
 
-- 이 state는 local, shared client, server 중 무엇인가?
+- 이 state는 local, shared client, server, URL 중 무엇인가?
 - 서버 데이터와 UI 선택 상태를 같은 state로 섞고 있지는 않은가?
 - state를 올리면 어떤 컴포넌트들이 영향을 받는가?
 - 지금 local로 두기 충분한데 불필요하게 올리지는 않았는가?
 - server state를 직접 관리하는 것이 지금 복잡도에 맞는가?
+- 링크 공유나 뒤로가기가 필요한 값인데 local state에 두고 있지는 않은가?
+- useState로 저장하고 있는 값이 사실 파생 state이지는 않은가?

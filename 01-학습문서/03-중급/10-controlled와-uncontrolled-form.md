@@ -2,8 +2,8 @@
 
 React form을 다룰 때는 controlled와 uncontrolled 방식을 구분해야 합니다.
 
-- controlled: 입력값을 React state가 관리합니다.
-- uncontrolled: 입력값을 DOM이 관리하고, 필요할 때 ref나 form submit으로 읽습니다.
+- **controlled**: 입력값을 React state가 관리합니다.
+- **uncontrolled**: 입력값을 DOM이 관리하고, 필요할 때 ref나 form submit으로 읽습니다.
 
 둘 중 하나만 정답은 아닙니다. 입력값이 UI 상태와 강하게 연결되면 controlled가 좋고, 단순 제출 중심의 form이면 uncontrolled가 더 단순할 수 있습니다.
 
@@ -22,13 +22,17 @@ function NicknameField() {
         value={nickname}
         onChange={(event) => setNickname(event.target.value)}
       />
+      {nickname.length > 0 && !isValid && (
+        <p>2자 이상 입력해주세요.</p>
+      )}
+      <p>{nickname.length} / 20</p>
       <button disabled={!isValid}>저장</button>
     </>
   );
 }
 ```
 
-입력값이 바뀔 때마다 React state가 바뀌고, 그 state로 검증, disabled, 미리보기, 글자 수 표시 같은 UI를 바로 계산할 수 있습니다.
+입력값이 바뀔 때마다 React state가 바뀌고, 그 state로 검증, disabled, 글자 수 표시 같은 UI를 바로 계산할 수 있습니다.
 
 ## Controlled가 어울리는 경우
 
@@ -86,7 +90,17 @@ controlled input은 `value`를 씁니다.
 <input value={nickname} onChange={(event) => setNickname(event.target.value)} />
 ```
 
-`value`를 넣고 `onChange`를 빠뜨리면 읽기 전용처럼 동작합니다. 반대로 `defaultValue`는 초기값만 정하고 이후 입력값은 DOM이 관리합니다.
+`value`를 넣고 `onChange`를 빠뜨리면 읽기 전용처럼 동작합니다. React에서 경고를 줍니다.
+
+```tsx
+// 경고 발생 — value가 있는데 onChange가 없음
+<input value={name} />
+
+// 의도적으로 읽기 전용으로 만들 때는 readOnly를 명시
+<input value={name} readOnly />
+```
+
+반대로 `defaultValue`는 초기값만 정하고 이후 입력값은 DOM이 관리합니다.
 
 ## ref로 값 읽기
 
@@ -131,7 +145,7 @@ uncontrolled form은 브라우저의 reset 기능과 잘 맞습니다.
 function SearchForm() {
   return (
     <form>
-      <input name="keyword" defaultValue="react" />
+      <input name="keyword" defaultValue="" />
       <button type="reset">초기화</button>
     </form>
   );
@@ -141,9 +155,103 @@ function SearchForm() {
 controlled form은 state를 직접 초기화해야 합니다.
 
 ```tsx
-function reset() {
-  setEmail("");
-  setPassword("");
+function LoginForm() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  function reset() {
+    setEmail("");
+    setPassword("");
+  }
+}
+```
+
+## 복잡한 form — 중첩 객체 다루기
+
+form 입력값이 중첩 객체일 때는 spread로 부분 업데이트합니다.
+
+```tsx
+type FormData = {
+  name: string;
+  address: {
+    city: string;
+    zip: string;
+  };
+};
+
+function ProfileForm() {
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    address: { city: "", zip: "" },
+  });
+
+  function handleNameChange(value: string) {
+    setFormData((prev) => ({ ...prev, name: value }));
+  }
+
+  function handleCityChange(value: string) {
+    setFormData((prev) => ({
+      ...prev,
+      address: { ...prev.address, city: value },
+    }));
+  }
+
+  return (
+    <form>
+      <input
+        value={formData.name}
+        onChange={(e) => handleNameChange(e.target.value)}
+        placeholder="이름"
+      />
+      <input
+        value={formData.address.city}
+        onChange={(e) => handleCityChange(e.target.value)}
+        placeholder="도시"
+      />
+    </form>
+  );
+}
+```
+
+## form 라이브러리를 고려할 시점
+
+직접 controlled form으로 충분한 경우가 많지만, 아래 상황이 겹치면 React Hook Form 같은 라이브러리를 고려합니다.
+
+- field가 10개 이상이고 각각 다른 검증 규칙이 있다.
+- 배열 형태의 동적 field가 필요하다 (동적으로 추가/삭제되는 행).
+- submit 중 각 field의 touched/dirty 상태를 관리해야 한다.
+- form 성능이 중요하고 매 키입력마다 전체 form이 렌더링되면 안 된다.
+- 복잡한 cross-field validation이 필요하다.
+
+React Hook Form은 uncontrolled 방식으로 동작하므로 성능이 우수하고, 검증, 에러, 제출 상태를 통합적으로 관리합니다.
+
+```tsx
+// React Hook Form 예시
+import { useForm } from "react-hook-form";
+
+function SignupForm() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<{ email: string; password: string }>();
+
+  function onSubmit(data: { email: string; password: string }) {
+    signup(data);
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <input
+        {...register("email", {
+          required: "이메일을 입력해주세요.",
+          pattern: { value: /@/, message: "올바른 이메일 형식이 아닙니다." },
+        })}
+      />
+      {errors.email && <p>{errors.email.message}</p>}
+      <button type="submit">가입</button>
+    </form>
+  );
 }
 ```
 
@@ -154,9 +262,11 @@ function reset() {
 | 입력 중 글자 수 표시 | controlled |
 | 제출할 때만 값 필요 | uncontrolled |
 | submit 버튼 disabled 계산 | controlled |
-| 큰 설문 form에서 최종 제출만 처리 | uncontrolled 또는 form library |
+| 큰 설문 form에서 최종 제출만 처리 | uncontrolled 또는 form 라이브러리 |
 | API 검색어와 즉시 연결 | controlled |
 | 파일 input | uncontrolled |
+| 동적 field 배열 | form 라이브러리 검토 |
+| 복잡한 cross-field validation | form 라이브러리 검토 |
 
 ## 읽으면서 생각할 질문
 
@@ -164,4 +274,5 @@ function reset() {
 - 제출 시점에만 값이 필요하지 않은가?
 - `value`와 `defaultValue`를 섞고 있지는 않은가?
 - reset을 state로 할 것인가, 브라우저 form reset으로 할 것인가?
-- field가 많아졌을 때 form library가 필요한 복잡도인가?
+- field가 많아졌을 때 form 라이브러리가 필요한 복잡도인가?
+- controlled로 관리할 때 매 키입력마다 렌더링이 문제되지는 않는가?

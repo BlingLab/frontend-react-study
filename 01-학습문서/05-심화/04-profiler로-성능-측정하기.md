@@ -90,6 +90,49 @@ React 컴포넌트 함수가 다시 실행되는 것은 정상입니다. 모든 
 
 `memo`, `useMemo`, `useCallback`은 코드 복잡도를 늘립니다. 실제로 빨라지는지 측정하지 않으면 유지보수 비용만 생길 수 있습니다.
 
+## 브라우저 Performance 탭
+
+React DevTools Profiler는 컴포넌트 렌더링 비용을 봅니다. 브라우저 Performance 탭은 전체 JavaScript 실행, 레이아웃, 페인트를 봅니다.
+
+사용자가 느리다고 느끼는 원인이 React 렌더링인지, DOM 레이아웃 비용인지, 네트워크인지를 구분할 때 브라우저 Performance 탭을 씁니다.
+
+- Long Tasks: 50ms 이상 메인 스레드를 점유하는 작업 단위
+- Layout Shift: 화면 요소가 예기치 않게 이동하는 현상 (CLS)
+- FPS: 스크롤이나 애니메이션이 60fps를 유지하는지
+
+React 렌더링이 문제라면 DevTools Profiler에서 잡힙니다. 레이아웃이나 CSS 애니메이션이 문제라면 브라우저 Performance 탭에서 찾습니다.
+
+## 성능 작업 흐름
+
+측정 → 원인 파악 → 수정 → 재측정 순서를 지킵니다.
+
+```md
+## 성능 작업 기록
+
+### 문제
+- 행동: 검색 input에 한 글자씩 입력
+- 증상: 입력할 때마다 화면이 버벅임
+
+### 측정 (수정 전)
+- ProductList update: 평균 48ms
+- render reason: keyword state 변경
+- 느린 원인: 3,000개 item을 매 입력마다 filter + sort
+
+### 수정
+- filter 결과를 useMemo로 캐시
+- keyword state를 SearchInput 안으로 이동
+- ProductChart를 SearchSection 밖으로 분리
+
+### 측정 (수정 후)
+- ProductList update: 평균 11ms
+- 입력 응답이 60fps 유지
+
+### 남은 과제
+- DOM node 수가 많아 스크롤이 여전히 느림 → pagination 검토
+```
+
+이 기록이 있어야 "왜 이 최적화를 했는지"를 코드 리뷰나 면접에서 설명할 수 있습니다.
+
 ## 읽으면서 생각할 질문
 
 - 느린 사용자 행동을 하나로 좁혔는가?
@@ -97,3 +140,4 @@ React 컴포넌트 함수가 다시 실행되는 것은 정상입니다. 모든 
 - 최적화 전후 지표를 기록했는가?
 - Strict Mode 때문에 로그가 더 많이 찍히는 상황은 아닌가?
 - memoization보다 state 위치 조정이 먼저 필요한가?
+- 느린 원인이 React 렌더링인지, DOM 레이아웃인지, 네트워크인지 구분했는가?

@@ -28,7 +28,7 @@ function ClickCounter() {
     <button
       type="button"
       onClick={() => {
-        countRef.current += 1;
+        countRef.current += 1; // 바뀌지만 화면은 업데이트 안 됨
       }}
     >
       {countRef.current}
@@ -44,7 +44,7 @@ function ClickCounter() {
   const [count, setCount] = useState(0);
 
   return (
-    <button type="button" onClick={() => setCount((value) => value + 1)}>
+    <button type="button" onClick={() => setCount((prev) => prev + 1)}>
       {count}
     </button>
   );
@@ -111,26 +111,65 @@ function ArticlePage() {
 }
 ```
 
+특정 항목으로 스크롤하는 경우도 비슷합니다.
+
+```tsx
+function MessageList({ messages, newMessageId }: Props) {
+  const newMessageRef = useRef<HTMLLIElement | null>(null);
+
+  useEffect(() => {
+    if (newMessageId) {
+      newMessageRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [newMessageId]);
+
+  return (
+    <ul>
+      {messages.map((message) => (
+        <li
+          key={message.id}
+          ref={message.id === newMessageId ? newMessageRef : null}
+        >
+          {message.text}
+        </li>
+      ))}
+    </ul>
+  );
+}
+```
+
 ## 타이머 id 저장하기
 
 타이머 id는 화면에 보여줄 값이 아닙니다. 렌더링 사이에 기억하고 있다가 나중에 clear할 수 있으면 됩니다.
 
 ```tsx
-function AutosaveButton() {
+function AutosaveEditor() {
+  const [content, setContent] = useState("");
   const timeoutRef = useRef<number | null>(null);
 
-  function scheduleSave() {
+  function handleChange(event: ChangeEvent<HTMLTextAreaElement>) {
+    const next = event.target.value;
+    setContent(next);
+
     if (timeoutRef.current !== null) {
       window.clearTimeout(timeoutRef.current);
     }
 
     timeoutRef.current = window.setTimeout(() => {
-      saveDraft();
+      saveDraft(next);
       timeoutRef.current = null;
-    }, 500);
+    }, 1000);
   }
 
-  return <button onClick={scheduleSave}>임시 저장 예약</button>;
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current !== null) {
+        window.clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  return <textarea value={content} onChange={handleChange} />;
 }
 ```
 
@@ -146,11 +185,13 @@ function usePrevious<T>(value: T) {
 
   useEffect(() => {
     ref.current = value;
-  }, [value]);
+  });
 
   return ref.current;
 }
 ```
+
+Effect는 렌더링 이후에 실행됩니다. 그래서 Effect 실행 전에는 이전 렌더링의 값이, Effect 실행 후에는 현재 렌더링의 값이 `ref.current`에 있습니다.
 
 사용 예시는 다음과 같습니다.
 
@@ -158,12 +199,88 @@ function usePrevious<T>(value: T) {
 function PriceLabel({ price }: { price: number }) {
   const previousPrice = usePrevious(price);
   const isIncreased = previousPrice !== undefined && price > previousPrice;
+  const isDecreased = previousPrice !== undefined && price < previousPrice;
 
   return (
     <p>
       {price.toLocaleString()}원
-      {isIncreased && <span> 상승</span>}
+      {isIncreased && <span className="up"> ▲</span>}
+      {isDecreased && <span className="down"> ▼</span>}
     </p>
+  );
+}
+```
+
+## DOM 크기 측정하기
+
+요소의 크기나 위치가 필요할 때는 ref와 `ResizeObserver`를 함께 씁니다.
+
+```tsx
+function useElementSize(ref: React.RefObject<Element | null>) {
+  const [size, setSize] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    const observer = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect;
+      setSize({ width, height });
+    });
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [ref]);
+
+  return size;
+}
+
+function ResponsiveChart() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { width } = useElementSize(containerRef);
+
+  return (
+    <div ref={containerRef}>
+      <Chart width={width} />
+    </div>
+  );
+}
+```
+
+## forwardRef — 커스텀 컴포넌트에 ref 전달하기
+
+일반적으로 `ref`는 DOM 노드에 연결됩니다. 커스텀 컴포넌트에 ref를 전달하려면 `forwardRef`를 써야 합니다.
+
+```tsx
+// forwardRef로 감싸야 ref를 받을 수 있음
+const TextInput = forwardRef<HTMLInputElement, { placeholder?: string }>(
+  function TextInput({ placeholder }, ref) {
+    return (
+      <input
+        ref={ref}
+        placeholder={placeholder}
+        className="text-input"
+      />
+    );
+  },
+);
+```
+
+사용하는 쪽에서는 일반 DOM처럼 씁니다.
+
+```tsx
+function Form() {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  function handleSubmit() {
+    inputRef.current?.focus();
+  }
+
+  return (
+    <>
+      <TextInput ref={inputRef} placeholder="이름 입력" />
+      <button onClick={handleSubmit}>포커스</button>
+    </>
   );
 }
 ```
@@ -198,6 +315,7 @@ function GoodForm() {
   return (
     <>
       <input value={name} onChange={(event) => setName(event.target.value)} />
+      {!isValid && name.length > 0 && <p>2자 이상 입력해주세요.</p>}
       <button type="submit" disabled={!isValid}>
         저장
       </button>
@@ -213,3 +331,5 @@ function GoodForm() {
 - ref에 저장한 값을 렌더링 결과에 사용하고 있지는 않은가?
 - state로 두면 불필요한 렌더링이 생기는 값인가?
 - ref를 사용해서 React 데이터 흐름을 우회하고 있지는 않은가?
+- 커스텀 컴포넌트에 ref를 전달해야 할 때 `forwardRef`를 쓰고 있는가?
+- 타이머나 구독 cleanup을 ref와 함께 관리하고 있는가?

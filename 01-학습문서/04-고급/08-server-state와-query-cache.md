@@ -48,6 +48,89 @@ TanStack Query나 SWR 같은 도구는 server state를 cache로 관리합니다.
 
 도구를 쓰는 이유는 "fetch 코드를 짧게 만들기"가 아니라 server state의 성격을 명시적으로 다루기 위해서입니다.
 
+## TanStack Query 기본 사용
+
+```tsx
+// 1. QueryClient 설정
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60, // 1분 동안 신선한 데이터로 취급
+      retry: 1,             // 실패 시 1회 재시도
+    },
+  },
+});
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Routes />
+    </QueryClientProvider>
+  );
+}
+```
+
+```tsx
+// 2. useQuery로 데이터 읽기
+import { useQuery } from "@tanstack/react-query";
+
+function PostList() {
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["posts"],
+    queryFn: () => fetchPosts(),
+  });
+
+  if (isLoading) return <p>불러오는 중...</p>;
+  if (isError) return <p>오류: {error.message}</p>;
+  if (!data?.length) return <p>게시글이 없습니다.</p>;
+
+  return (
+    <ul>
+      {data.map((post) => (
+        <li key={post.id}>{post.title}</li>
+      ))}
+    </ul>
+  );
+}
+```
+
+## useQuery 상태 구분
+
+TanStack Query가 제공하는 상태를 파악해두면 다양한 UI를 만들 수 있습니다.
+
+| 상태 | 의미 |
+| --- | --- |
+| `isLoading` | 데이터가 없고 fetch 중 (첫 로드) |
+| `isFetching` | fetch 중 (background refetch 포함) |
+| `isSuccess` | 데이터 있음 |
+| `isError` | 오류 발생 |
+| `isStale` | 데이터가 staleTime을 지나 오래됨 |
+| `isPaused` | 네트워크 오프라인으로 일시 중지 |
+
+`isLoading`과 `isFetching`의 차이가 중요합니다. `isLoading`은 캐시가 없는 첫 로드일 때만 true입니다. `isFetching`은 background refetch 중에도 true입니다.
+
+```tsx
+function PostList() {
+  const { data, isLoading, isFetching, isError } = useQuery({
+    queryKey: ["posts"],
+    queryFn: fetchPosts,
+  });
+
+  return (
+    <div>
+      {/* 스피너는 백그라운드 refetch 중에도 작게 표시 */}
+      {isFetching && <SmallSpinner />}
+
+      {isLoading && <SkeletonList />}
+      {isError && <ErrorMessage />}
+      {data && <PostItems posts={data} />}
+    </div>
+  );
+}
+```
+
 ## query key 감각
 
 query cache 도구는 보통 query key로 데이터를 구분합니다.
@@ -64,6 +147,38 @@ query key는 "이 데이터가 무엇으로 결정되는가"를 표현합니다.
 ```tsx
 // 좋지 않음: keyword가 바뀌어도 같은 cache로 취급될 수 있음
 queryKey: ["posts"];
+
+// 올바름: 조건이 달라지면 다른 cache 항목
+queryKey: ["posts", { keyword, page }];
+queryKey: ["user", userId];
+queryKey: ["user", userId, "posts"];
+```
+
+## 의존 쿼리 (Dependent Queries)
+
+이전 요청의 결과에 의존하는 경우 `enabled` 옵션을 사용합니다.
+
+```tsx
+function UserProfile({ userId }: { userId: string }) {
+  const { data: user } = useQuery({
+    queryKey: ["user", userId],
+    queryFn: () => fetchUser(userId),
+  });
+
+  // user가 있어야만 posts 요청
+  const { data: posts } = useQuery({
+    queryKey: ["user", userId, "posts"],
+    queryFn: () => fetchUserPosts(userId),
+    enabled: !!user, // user가 없으면 요청 안 함
+  });
+
+  return (
+    <div>
+      {user && <UserCard user={user} />}
+      {posts && <PostList posts={posts} />}
+    </div>
+  );
+}
 ```
 
 ## server state와 UI state를 섞지 않기
@@ -95,6 +210,41 @@ UI state와 server state를 구분하면 state 관리 도구를 과하게 쓰지
 
 서버 데이터를 바꾸는 요청을 mutation이라고 부릅니다. 예를 들어 게시글 추가, 삭제, 좋아요 저장입니다.
 
+```tsx
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+function useCreatePost() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (newPost: { title: string; body: string }) =>
+      createPost(newPost),
+
+    onSuccess: () => {
+      // 관련 query를 stale로 만들고 background에서 다시 fetch
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
+  });
+}
+
+function NewPostForm() {
+  const createPost = useCreatePost();
+
+  function handleSubmit(data: { title: string; body: string }) {
+    createPost.mutate(data);
+  }
+
+  return (
+    <form onSubmit={...}>
+      {createPost.isError && <p>게시글 작성에 실패했습니다.</p>}
+      <button disabled={createPost.isPending}>
+        {createPost.isPending ? "저장 중..." : "게시"}
+      </button>
+    </form>
+  );
+}
+```
+
 mutation 후에는 보통 세 가지 선택지가 있습니다.
 
 | 방법 | 설명 |
@@ -125,3 +275,4 @@ query cache 도구가 `isLoading`, `isError`, `data` 같은 값을 제공해도,
 - 검색어, page, filter가 query key에 반영되어 있는가?
 - mutation 후 invalidate, cache update, optimistic update 중 무엇이 자연스러운가?
 - query cache 도구를 도입할 만큼 server state 요구가 복잡해졌는가?
+- `isLoading`과 `isFetching`의 차이를 UI에서 구분해서 다루고 있는가?

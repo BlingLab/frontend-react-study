@@ -17,7 +17,7 @@ function useToggle(initialValue = false) {
   }
 
   function toggle() {
-    setIsOn((value) => !value);
+    setIsOn((prev) => !prev);
   }
 
   return { isOn, turnOn, turnOff, toggle };
@@ -49,6 +49,8 @@ useToggle();
 useWindowSize();
 useDebouncedValue(keyword, 300);
 useLocalStorageState("theme", "light");
+useOnClickOutside(ref, handler);
+useMediaQuery("(max-width: 768px)");
 ```
 
 ### JSX를 반환하지 않는다
@@ -63,7 +65,7 @@ function useDisclosure(initialOpen = false) {
     isOpen,
     open: () => setIsOpen(true),
     close: () => setIsOpen(false),
-    toggle: () => setIsOpen((value) => !value),
+    toggle: () => setIsOpen((prev) => !prev),
   };
 }
 
@@ -130,6 +132,7 @@ function SearchBox() {
     <input
       value={keyword}
       onChange={(event) => setKeyword(event.target.value)}
+      placeholder="검색어 입력"
     />
   );
 }
@@ -140,13 +143,18 @@ function SearchBox() {
 브라우저 저장소와 state를 연결하는 로직도 여러 곳에서 반복되기 쉽습니다.
 
 ```tsx
-function useLocalStorageState(key: string, initialValue: string) {
-  const [value, setValue] = useState(() => {
-    return window.localStorage.getItem(key) ?? initialValue;
+function useLocalStorageState<T>(key: string, initialValue: T) {
+  const [value, setValue] = useState<T>(() => {
+    try {
+      const stored = window.localStorage.getItem(key);
+      return stored !== null ? (JSON.parse(stored) as T) : initialValue;
+    } catch {
+      return initialValue;
+    }
   });
 
   useEffect(() => {
-    window.localStorage.setItem(key, value);
+    window.localStorage.setItem(key, JSON.stringify(value));
   }, [key, value]);
 
   return [value, setValue] as const;
@@ -157,14 +165,91 @@ function useLocalStorageState(key: string, initialValue: string) {
 
 ```tsx
 function ThemeSelect() {
-  const [theme, setTheme] = useLocalStorageState("theme", "light");
+  const [theme, setTheme] = useLocalStorageState<"light" | "dark">("theme", "light");
 
   return (
-    <select value={theme} onChange={(event) => setTheme(event.target.value)}>
+    <select value={theme} onChange={(event) => setTheme(event.target.value as "light" | "dark")}>
       <option value="light">Light</option>
       <option value="dark">Dark</option>
     </select>
   );
+}
+```
+
+## 예제: 외부 클릭 감지
+
+모달이나 드롭다운 밖을 클릭할 때 닫는 기능은 여러 컴포넌트에서 반복됩니다.
+
+```tsx
+function useOnClickOutside(
+  ref: React.RefObject<HTMLElement | null>,
+  handler: () => void,
+) {
+  useEffect(() => {
+    function handleClick(event: MouseEvent) {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        handler();
+      }
+    }
+
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [ref, handler]);
+}
+```
+
+사용하는 쪽은 간결합니다.
+
+```tsx
+function Dropdown({ onClose }: { onClose: () => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useOnClickOutside(ref, onClose);
+
+  return (
+    <div ref={ref} className="dropdown">
+      {/* 드롭다운 내용 */}
+    </div>
+  );
+}
+```
+
+## 예제: 교차 관찰 (Intersection Observer)
+
+요소가 뷰포트에 들어왔을 때를 감지하는 로직입니다. 무한 스크롤이나 지연 로딩에 쓰입니다.
+
+```tsx
+function useIntersectionObserver(
+  ref: React.RefObject<Element | null>,
+  options?: IntersectionObserverInit,
+) {
+  const [isIntersecting, setIsIntersecting] = useState(false);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsIntersecting(entry.isIntersecting);
+    }, options);
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [ref, options]);
+
+  return isIntersecting;
+}
+```
+
+```tsx
+function LoadMoreTrigger({ onVisible }: { onVisible: () => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isVisible = useIntersectionObserver(ref);
+
+  useEffect(() => {
+    if (isVisible) onVisible();
+  }, [isVisible, onVisible]);
+
+  return <div ref={ref} style={{ height: 1 }} />;
 }
 ```
 
@@ -221,12 +306,61 @@ function useWindowSize() {
 }
 ```
 
+## 흔한 실수
+
+**cleanup을 빠뜨리기**
+
+```tsx
+// 좋지 않음 — 컴포넌트가 사라진 뒤에도 이벤트 리스너가 남음
+function useScrollPosition() {
+  const [position, setPosition] = useState(0);
+
+  useEffect(() => {
+    window.addEventListener("scroll", () => setPosition(window.scrollY));
+    // cleanup 없음!
+  }, []);
+
+  return position;
+}
+```
+
+**dependency를 숨기기**
+
+```tsx
+// 좋지 않음 — userId가 dependency에 없어서 오래된 값을 볼 수 있음
+function useUserData(userId: string) {
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    fetchUser(userId).then(setUser);
+  }, []); // userId를 빼면 처음 값만 사용
+
+  return user;
+}
+
+// 올바름
+function useUserData(userId: string) {
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    let ignore = false;
+    fetchUser(userId).then((data) => {
+      if (!ignore) setUser(data);
+    });
+    return () => { ignore = true; };
+  }, [userId]); // userId 포함
+
+  return user;
+}
+```
+
 ## 읽으면서 생각할 질문
 
 - 이 상태 로직에 이름을 붙이면 컴포넌트가 짧아지는가?
-- custom Hook이 JSX에 의존하고 있지는 않은가?
+- Custom Hook이 JSX에 의존하고 있지는 않은가?
 - 반환값을 object로 하면 호출부가 더 읽기 쉬운가?
 - Hook 이름이 실제 목적을 설명하는가?
 - 여러 컴포넌트에서 같은 규칙을 반복하고 있지는 않은가?
 - 이 Hook은 state를 공유하는가, 로직만 공유하는가?
 - Effect를 Hook 안에 숨겼다면 cleanup과 dependency가 여전히 명확한가?
+- 두 컴포넌트가 같은 Hook을 쓰면 각자 독립적인 state를 갖는다는 점을 이해했는가?

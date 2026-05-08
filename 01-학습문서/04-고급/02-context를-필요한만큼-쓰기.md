@@ -129,6 +129,41 @@ function LogoutButton() {
 
 `user` state가 바뀌어도 `dispatch` 참조는 바뀌지 않으므로, `LogoutButton`은 불필요하게 다시 렌더링되지 않습니다.
 
+## Context 재렌더링 문제와 해결
+
+Context value 객체가 매 렌더링마다 새로 만들어지면, 값이 실제로 바뀌지 않아도 모든 구독 컴포넌트가 다시 렌더링됩니다.
+
+```tsx
+// 문제: 렌더링마다 새 객체
+function BadProvider({ children }) {
+  const [count, setCount] = useState(0);
+
+  return (
+    // App이 리렌더링될 때마다 { count, setCount }가 새 객체
+    <CountContext.Provider value={{ count, setCount }}>
+      {children}
+    </CountContext.Provider>
+  );
+}
+```
+
+```tsx
+// 해결: useMemo로 객체 안정화
+function GoodProvider({ children }) {
+  const [count, setCount] = useState(0);
+
+  const value = useMemo(() => ({ count, setCount }), [count]);
+
+  return (
+    <CountContext.Provider value={value}>
+      {children}
+    </CountContext.Provider>
+  );
+}
+```
+
+또는 state와 dispatch를 처음부터 두 Context로 나누는 방법이 더 근본적인 해결입니다.
+
 ## Provider 범위를 좁게 잡기
 
 Provider는 필요한 영역만 감쌉니다.
@@ -164,6 +199,52 @@ function App() {
 ```
 
 장바구니 state는 장바구니 기능 안에만 있으면 됩니다. 앱 전체가 장바구니 state를 알 필요는 없습니다.
+
+## Provider 합성
+
+여러 Provider를 중첩하면 가독성이 떨어집니다. 합성 컴포넌트로 정리할 수 있습니다.
+
+```tsx
+// 중첩이 깊어지면 읽기 어려움
+function App() {
+  return (
+    <ThemeProvider>
+      <AuthProvider>
+        <RouterProvider>
+          <QueryClientProvider client={queryClient}>
+            <AppRoutes />
+          </QueryClientProvider>
+        </RouterProvider>
+      </AuthProvider>
+    </ThemeProvider>
+  );
+}
+```
+
+```tsx
+// 합성 컴포넌트로 정리
+function AppProviders({ children }: { children: ReactNode }) {
+  return (
+    <ThemeProvider>
+      <AuthProvider>
+        <RouterProvider>
+          <QueryClientProvider client={queryClient}>
+            {children}
+          </QueryClientProvider>
+        </RouterProvider>
+      </AuthProvider>
+    </ThemeProvider>
+  );
+}
+
+function App() {
+  return (
+    <AppProviders>
+      <AppRoutes />
+    </AppProviders>
+  );
+}
+```
 
 ## Context가 어울리는 경우
 
@@ -208,6 +289,20 @@ function Layout({ header }: { header: ReactNode }) {
 
 `Layout`은 `user`와 `notifications`를 알 필요가 없습니다.
 
+## Context vs 전역 state 라이브러리
+
+Context가 자주 바뀌거나 읽는 컴포넌트가 많다면 렌더링 비용이 문제될 수 있습니다. 이때 Zustand 같은 전역 state 라이브러리를 고려합니다.
+
+| 상황 | 적합한 도구 |
+| --- | --- |
+| 테마, 언어처럼 거의 안 바뀌는 값 | Context |
+| 로그인 정보처럼 드물게 바뀌는 값 | Context |
+| 장바구니, 알림처럼 자주 바뀌고 여럿이 읽는 값 | Zustand, Redux |
+| 서버 데이터 캐시 | TanStack Query, SWR |
+| 폼 입력처럼 한 화면 안에서만 쓰는 값 | local state |
+
+라이브러리 도입보다 먼저 state 분류가 옳은지 확인합니다. Context를 잘못 쓰는 문제라면 라이브러리를 추가해도 근본 문제가 남습니다.
+
 ## Context를 피해야 할 경우
 
 - 한 컴포넌트에서만 쓰는 값 → 그 컴포넌트의 local state
@@ -223,3 +318,4 @@ function Layout({ header }: { header: ReactNode }) {
 - Provider 범위가 필요한 것보다 너무 넓지 않은가?
 - state와 변경 함수를 분리해서 불필요한 재렌더링을 줄일 수 있는가?
 - Context value가 자주 바뀐다면 읽는 컴포넌트 수를 줄일 수 있는가?
+- Context가 아닌 전역 state 라이브러리가 더 적합한 상황인가?
