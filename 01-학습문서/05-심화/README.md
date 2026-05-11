@@ -54,6 +54,11 @@ React API Reference와 Compiler 문서는 성능 최적화를 "기본 습관"이
 - 예제 안내: [02-학습예제/05-심화](../../02-학습예제/05-심화/README.md)
 - 실행 명령: `pnpm run 예제:심화`
 - 실제 코드: `src/examples/PerformanceExample.tsx`
+- 실제 코드: `src/examples/AdvancedHooksExample.tsx`
+- 실제 코드: `src/examples/TypeScriptPatternsExample.tsx`
+- 실제 코드: `src/hooks/useLocalStorage.ts`
+- 실제 코드: `src/hooks/useDebounce.ts`
+- 실제 코드: `src/hooks/useOnlineStatus.ts`
 
 ## 빠른 정리
 

@@ -4,7 +4,7 @@
 
 Effect는 기본적으로 reactive합니다. Effect 안에서 읽는 props와 state는 dependency에 들어가야 하고, dependency가 바뀌면 Effect는 다시 동기화됩니다. 하지만 Effect 안의 모든 코드가 같은 이유로 다시 실행되어야 하는 것은 아닙니다.
 
-> **주의**: `useEffectEvent`는 아직 실험적 API입니다 (React 18.x 기준). 안정화되기 전까지 production에서 직접 사용하기보다 패턴을 이해하는 용도로 학습합니다. Canary 채널에서 사용 가능합니다.
+> **버전 확인**: 현재 저장소의 React 19.2.x에서는 `useEffectEvent`가 공식 API Reference에 포함되어 있습니다. 오래된 React 18.x 또는 canary 기반 자료를 볼 때는 실험 API로 설명되어 있을 수 있으므로, 프로젝트의 React 버전과 `eslint-plugin-react-hooks` 지원 여부를 함께 확인합니다.
 
 ## 문제 상황
 
@@ -52,9 +52,9 @@ function ChatRoom({ roomId, theme }: Props) {
 
 `onConnected`는 Effect Event입니다. Effect 안에서 호출되지만, 그 내부 로직은 dependency를 늘려 Effect를 다시 동기화하지 않습니다. 동시에 실행 시점의 최신 `theme`를 읽을 수 있습니다.
 
-## useEffectEvent 이전의 우회 방법: useRef
+## useEffectEvent를 쓰지 못하는 환경의 우회 방법: useRef
 
-`useEffectEvent`가 안정화되기 전에는 `useRef`로 비슷한 효과를 얻었습니다.
+프로젝트가 `useEffectEvent`를 지원하지 않는 React 버전이나 lint 설정을 쓰고 있다면 `useRef`로 비슷한 효과를 얻을 수 있습니다.
 
 ```tsx
 function ChatRoom({ roomId, theme }: Props) {
@@ -80,7 +80,7 @@ function ChatRoom({ roomId, theme }: Props) {
 
 이 패턴은 동작하지만 `useEffectEvent`보다 의도가 덜 명확하고, 실수할 여지가 있습니다. `themeRef.current`를 읽는 코드가 dependency에서 제외되어야 한다는 것이 암묵적입니다.
 
-`useEffectEvent`는 이 패턴을 명시적으로 표현하기 위해 만들어졌습니다.
+`useEffectEvent`는 이 패턴을 명시적으로 표현합니다. 지원되는 환경에서는 ref에 최신 값을 직접 동기화하는 코드보다 의도가 분명합니다.
 
 ## event handler, Effect, Effect Event 비교
 
@@ -115,6 +115,8 @@ useEffect(() => {
 - 외부 시스템 연결 조건은 dependency에 남긴다.
 - 연결 중 발생하는 callback에서 최신 값만 읽어야 하는 로직을 Effect Event로 뺀다.
 - Effect Event는 Effect나 다른 Effect Event 안에서 호출한다.
+- Effect Event를 자식 컴포넌트에 props로 넘기거나 일반 event handler처럼 쓰지 않는다.
+- Effect Event 함수는 dependency 배열에 넣지 않는다.
 
 ## 자주 나오는 사례
 
@@ -180,7 +182,7 @@ function ProductPage({ productId }: { productId: string }) {
 - Effect 자체를 제거할 수 있다.
 - event handler로 옮기면 된다.
 - dependency가 바뀔 때 다시 동기화하는 것이 맞다.
-- 프로젝트가 아직 `useEffectEvent`를 안정적으로 사용할 React 버전과 lint 설정을 갖추지 않았다.
+- 프로젝트가 아직 `useEffectEvent`를 사용할 React 버전과 lint 설정을 갖추지 않았다.
 
 대부분의 중급 Effect 문제는 `useEffectEvent` 전에 구조 조정으로 해결됩니다. 이 Hook은 고급 단계에서 dependency와 비반응 로직을 더 세밀하게 분리할 때 다룹니다.
 

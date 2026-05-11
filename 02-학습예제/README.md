@@ -24,15 +24,24 @@ pnpm run 예제:기초
 
 ## 개별 예제 바로 열기
 
-| 예제 | 실행 명령 |
-| --- | --- |
-| 컴포넌트와 목록 | `pnpm run 예제:컴포넌트` |
-| Props와 State | `pnpm run 예제:state` |
-| Event와 Form | `pnpm run 예제:form` |
-| Effect와 Fetching | `pnpm run 예제:effect` |
-| Custom Hook | `pnpm run 예제:hook` |
-| Reducer와 Context | `pnpm run 예제:reducer` |
-| 성능 | `pnpm run 예제:성능` |
+| 예제 | 실행 명령 | 관련 문서 |
+| --- | --- | --- |
+| 컴포넌트와 목록 | `pnpm run 예제:컴포넌트` | 01-기초 |
+| Props와 State | `pnpm run 예제:state` | 02-초급 |
+| Event와 Form | `pnpm run 예제:form` | 02-초급 |
+| Effect와 Fetching | `pnpm run 예제:effect` | 03-중급 |
+| Custom Hook | `pnpm run 예제:hook` | 03-중급 |
+| 중급 패턴 | `pnpm run 예제:중급패턴` | 03-중급 |
+| Portal과 Modal | `pnpm run 예제:portal` | 03-중급/12 |
+| Deferred Value | `pnpm run 예제:deferred` | 03-중급/14 |
+| Lazy Loading | `pnpm run 예제:lazy` | 03-중급/13 |
+| Reducer와 Context | `pnpm run 예제:reducer` | 04-고급 |
+| Transition | `pnpm run 예제:transition` | 04-고급/04 |
+| Optimistic UI | `pnpm run 예제:optimistic` | 04-고급/07 |
+| Error Boundary | `pnpm run 예제:error-boundary` | 04-고급/06 |
+| 성능 | `pnpm run 예제:성능` | 05-심화 |
+| Custom Hook 심화 | `pnpm run 예제:hook심화` | 05-심화/08 |
+| TypeScript 패턴 | `pnpm run 예제:타입스크립트` | 05-심화/09 |
 
 ## 빌드 후 확인
 

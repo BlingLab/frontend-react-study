@@ -19,6 +19,15 @@
 pnpm run 예제:고급
 ```
 
+각 예제를 바로 열고 싶다면 아래 명령을 사용합니다.
+
+```bash
+pnpm run 예제:reducer
+pnpm run 예제:transition
+pnpm run 예제:optimistic
+pnpm run 예제:error-boundary
+```
+
 빌드 결과로 확인하려면 다음 명령을 사용합니다.
 
 ```bash
@@ -28,6 +37,9 @@ pnpm run 미리보기:고급
 ## 확인할 코드
 
 - `src/examples/ContextReducerExample.tsx`
+- `src/examples/TransitionExample.tsx`
+- `src/examples/OptimisticExample.tsx`
+- `src/examples/ErrorBoundaryExample.tsx`
 
 ## 직접 바꿔볼 것
 
@@ -35,8 +47,10 @@ pnpm run 미리보기:고급
 - action 이름을 사용자 의도 중심으로 바꿔봅니다.
 - Context provider 범위가 어디까지 필요한지 확인합니다.
 - state context와 dispatch context가 왜 분리되어 있는지 설명합니다.
-- pending UI를 전체 화면에 둘지 부분 영역에 둘지 판단해 봅니다.
+- `TransitionExample`에서 `startTransition`을 제거하고 탭 전환 시 input이 막히는지 확인합니다.
+- `isPending`을 활용해 로딩 스피너나 skeleton UI를 만들어봅니다.
+- `OptimisticExample`에서 실패 확률을 100%로 바꿔보고 낙관적 항목이 사라지는지 확인합니다.
+- optimistic update가 실패했을 때 사용자에게 어떻게 알려야 하는지 설계해 봅니다.
 - Error Boundary가 잡는 오류와 잡지 못하는 오류를 구분합니다.
-- optimistic update가 실패했을 때 되돌릴 수 있는지 설계해 봅니다.
 - 같은 서버 데이터를 여러 컴포넌트가 요청한다면 query cache가 필요한지 판단합니다.
 - Effect dependency를 줄이고 싶을 때 구조 변경과 `useEffectEvent` 중 무엇이 맞는지 비교합니다.

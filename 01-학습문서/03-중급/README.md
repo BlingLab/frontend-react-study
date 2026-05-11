@@ -66,6 +66,10 @@ React 공식 문서의 Escape Hatches 흐름은 ref, Effect, custom Hook을 "Rea
 - 실제 코드: `src/examples/EffectsFetchingExample.tsx`
 - 실제 코드: `src/examples/CustomHooksExample.tsx`
 - 실제 코드: `src/examples/IntermediatePatternsExample.tsx`
+- 실제 코드: `src/examples/PortalModalExample.tsx`
+- 실제 코드: `src/examples/DeferredValueExample.tsx`
+- 실제 코드: `src/examples/LazyLoadingExample.tsx`
+- 실제 코드: `src/hooks/useFetch.ts`
 
 ## 빠른 정리
 

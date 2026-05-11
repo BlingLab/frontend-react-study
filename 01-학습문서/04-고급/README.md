@@ -49,6 +49,9 @@ React 공식 문서의 Scaling Up with Reducer and Context, Full Stack Open의 s
 - 예제 안내: [02-학습예제/04-고급](../../02-학습예제/04-고급/README.md)
 - 실행 명령: `pnpm run 예제:고급`
 - 실제 코드: `src/examples/ContextReducerExample.tsx`
+- 실제 코드: `src/examples/TransitionExample.tsx`
+- 실제 코드: `src/examples/OptimisticExample.tsx`
+- 실제 코드: `src/examples/ErrorBoundaryExample.tsx`
 
 ## 빠른 정리
 

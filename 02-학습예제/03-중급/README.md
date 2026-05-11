@@ -23,12 +23,15 @@
 pnpm run 예제:중급
 ```
 
-중급에는 fetching과 custom Hook 예제가 함께 있습니다. 각각 바로 열고 싶다면 아래 명령을 사용합니다.
+중급에는 fetching, custom Hook, Portal, DeferredValue 예제가 있습니다. 각각 바로 열고 싶다면 아래 명령을 사용합니다.
 
 ```bash
 pnpm run 예제:effect
 pnpm run 예제:hook
 pnpm run 예제:중급패턴
+pnpm run 예제:portal
+pnpm run 예제:deferred
+pnpm run 예제:lazy
 ```
 
 빌드 결과로 확인하려면 다음 명령을 사용합니다.
@@ -42,7 +45,12 @@ pnpm run 미리보기:중급
 - `src/examples/EffectsFetchingExample.tsx`
 - `src/examples/CustomHooksExample.tsx`
 - `src/examples/IntermediatePatternsExample.tsx`
+- `src/examples/PortalModalExample.tsx`
+- `src/examples/DeferredValueExample.tsx`
+- `src/examples/LazyLoadingExample.tsx`
+- `src/examples/lazy/StudyStats.tsx`
 - `src/hooks/useToggle.ts`
+- `src/hooks/useFetch.ts`
 
 ## 직접 바꿔볼 것
 
@@ -53,3 +61,5 @@ pnpm run 미리보기:중급
 - `IntermediatePatternsExample`에서 `visibleArticles`를 state로 바꿔 보고 왜 어색해지는지 확인합니다.
 - 빈 검색어로 검색 확정을 눌렀을 때 ref가 input focus에만 쓰이는지 확인합니다.
 - 카테고리 필터를 URL search params로 옮긴다면 어떤 값이 URL에 남아야 하는지 적어 봅니다.
+- `PortalModalExample`에서 배경 클릭으로 닫히는 로직이 어떻게 동작하는지 확인합니다.
+- `createPortal`의 두 번째 인수를 `document.body` 대신 특정 컨테이너 div로 바꿔 봅니다.
