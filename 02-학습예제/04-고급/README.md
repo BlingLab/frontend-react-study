@@ -41,6 +41,16 @@ pnpm run 미리보기:고급
 - `src/examples/OptimisticExample.tsx`
 - `src/examples/ErrorBoundaryExample.tsx`
 
+## 예제별 집중 포인트
+
+| 예제 | 먼저 볼 것 | 핵심 질문 |
+| --- | --- | --- |
+| Context Reducer | action type, reducer, provider 범위 | 변경 규칙이 컴포넌트 안에 흩어지지 않았는가? |
+| Context Reducer | state context와 dispatch context | 읽는 컴포넌트와 변경하는 컴포넌트가 분리되는가? |
+| Transition | urgent state와 transition state | 사용자가 즉시 봐야 하는 update는 무엇인가? |
+| Optimistic UI | optimistic item, pending 상태, 실패 복구 | 서버 실패 후 사용자가 현재 상태를 이해할 수 있는가? |
+| Error Boundary | boundary 위치, reset 버튼 | 오류가 전체 앱이 아니라 기능 단위로 격리되는가? |
+
 ## 직접 바꿔볼 것
 
 - reducer에 새 action을 추가합니다.
@@ -54,3 +64,20 @@ pnpm run 미리보기:고급
 - Error Boundary가 잡는 오류와 잡지 못하는 오류를 구분합니다.
 - 같은 서버 데이터를 여러 컴포넌트가 요청한다면 query cache가 필요한지 판단합니다.
 - Effect dependency를 줄이고 싶을 때 구조 변경과 `useEffectEvent` 중 무엇이 맞는지 비교합니다.
+
+## 확장 과제
+
+| 과제 | 의도 |
+| --- | --- |
+| reducer action을 `item/added`, `item/toggled`처럼 사용자 의도로 이름 변경 | action을 구현 세부가 아니라 사건으로 읽는 연습 |
+| provider 범위를 일부 화면으로 좁혀보기 | Context를 전역 store처럼 쓰지 않는 감각 |
+| transition pending 상태를 skeleton 대신 작은 status text로 변경 | pending UI의 범위를 의식하는 연습 |
+| optimistic 실패 시 toast 대신 항목 옆 error 상태 표시 | 실패 복구를 사용자 행동과 연결 |
+| Error Boundary를 예제 전체와 작은 섹션에 각각 적용 | 오류 격리 범위 비교 |
+
+## 설명 질문
+
+- 이 state는 local UI state, shared client state, server state 중 무엇인가?
+- reducer를 쓰면 코드가 늘어나는데도 선택할 만한 기준은 무엇인가?
+- Context가 필요한 값과 props로 충분한 값은 어떻게 구분하는가?
+- optimistic update가 적합하지 않은 사용자 행동은 무엇인가?

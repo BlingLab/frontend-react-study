@@ -38,6 +38,18 @@ pnpm run 미리보기:심화
 - `src/hooks/useDebounce.ts`
 - `src/hooks/useOnlineStatus.ts`
 
+## 예제별 집중 포인트
+
+| 예제 | 먼저 볼 것 | 핵심 질문 |
+| --- | --- | --- |
+| Performance | 목록 크기, 필터 계산, memoization | 실제 병목을 확인한 뒤 최적화했는가? |
+| Performance | child props identity | `memo`가 있어도 props가 매번 바뀌는가? |
+| Advanced Hooks | `useLocalStorage` | 저장소 접근 실패나 잘못된 JSON을 어떻게 다루는가? |
+| Advanced Hooks | `useDebounce` | 모든 입력에 즉시 반응하지 않아도 되는 이유는 무엇인가? |
+| Advanced Hooks | `useOnlineStatus` | React 바깥 브라우저 이벤트를 어떻게 구독하는가? |
+| TypeScript Patterns | discriminated union | 불가능한 UI 상태 조합이 타입으로 막히는가? |
+| TypeScript Patterns | generic component | 데이터 모양은 달라도 반복되는 UI 구조를 재사용하는가? |
+
 ## 직접 바꿔볼 것
 
 - `useMemo`를 제거하고 다시 실행합니다.
@@ -51,3 +63,20 @@ pnpm run 미리보기:심화
 - `useDebounce`를 제거하고 모든 입력에 즉시 반응하도록 바꿔봅니다.
 - Custom Hook을 컴포넌트에서 분리한 뒤 `renderHook`으로 테스트할 수 있는지 확인합니다.
 - 심화 복습 시나리오의 각 판단 질문에 답변을 적어봅니다.
+
+## 측정 루틴
+
+성능 예제는 아래 순서로 봅니다.
+
+1. 목록 크기를 기본값으로 두고 입력 반응을 확인합니다.
+2. 목록 크기를 늘려 실제로 느려지는지 봅니다.
+3. `useMemo`, `memo`, `useCallback`을 제거하고 차이를 비교합니다.
+4. 느려진 지점이 계산 비용인지, DOM node 수인지, props identity인지 분리합니다.
+5. 최적화 코드가 문제를 줄였는지 다시 확인합니다.
+
+## 설명 질문
+
+- 렌더링이 많이 일어나는 것과 DOM 변경이 많은 것은 어떻게 다른가?
+- `useMemo`를 추가하기 전에 어떤 증거가 필요한가?
+- Custom Hook은 재사용 말고 어떤 장점을 주는가?
+- TypeScript union으로 loading/error/success를 나누면 boolean 여러 개보다 무엇이 좋아지는가?

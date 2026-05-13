@@ -41,6 +41,17 @@ pnpm run 미리보기:초급
 - `src/examples/PropsStateExample.tsx`
 - `src/examples/EventsFormsExample.tsx`
 
+## 예제별 집중 포인트
+
+| 예제 | 먼저 볼 것 | 확인 질문 |
+| --- | --- | --- |
+| Props State | 초기값 props, counter state, reset handler | 렌더링 사이에 기억해야 해서 state가 된 값은 무엇인가? |
+| Props State | count에서 계산한 문구와 상태 | 계산값을 state로 저장하면 어떤 동기화 문제가 생기는가? |
+| Events Forms | controlled input | 입력값은 왜 input DOM이 아니라 React state가 기준인가? |
+| Events Forms | submit handler | 사용자 의도는 어디에서 처리되고, UI 업데이트는 어디에서 일어나는가? |
+| Events Forms | todo 배열 업데이트 | 추가, 삭제, 토글이 원본 배열을 직접 바꾸지 않는가? |
+| Events Forms | 필터와 요약 | 완료 개수와 보이는 목록은 state인가 계산값인가? |
+
 ## 직접 바꿔볼 것
 
 - 카운터의 초기값과 step 값을 바꿉니다.
@@ -50,3 +61,19 @@ pnpm run 미리보기:초급
 - 완료 개수와 남은 개수가 state인지 계산값인지 설명합니다.
 - filter state를 추가해서 전체, 진행 중, 완료 목록을 나눠봅니다.
 - 목록 key를 일부러 index로 바꿨을 때 어떤 문제가 생길 수 있는지 설명해봅니다.
+
+## 확장 과제
+
+| 과제 | 의도 |
+| --- | --- |
+| Todo 제목을 더블클릭하면 수정 모드로 전환 | local UI state와 배열 수정 연결 |
+| 전체 완료/전체 해제 버튼 추가 | 여러 항목을 한 번에 업데이트하는 배열 state 연습 |
+| filter를 button 세 개로 바꾸고 active 표시 | UI state와 className 조건부 렌더링 연결 |
+| 남은 할 일만 있을 때 경고 문구 표시 | 계산값과 조건부 렌더링 연결 |
+
+## 설명 질문
+
+- `TodoForm`의 입력 state를 부모로 올리지 않아도 되는 이유는 무엇인가?
+- `handleAdd`, `handleToggle`, `handleDelete`가 모두 부모에 있는 이유는 무엇인가?
+- `completedCount`를 state로 두면 어떤 코드가 추가로 필요해지는가?
+- form submit에서 `preventDefault`가 빠지면 사용자는 어떤 현상을 보게 되는가?
