@@ -12,6 +12,7 @@
 - [Optimistic UI 설계하기](../../01-학습문서/04-고급/07-optimistic-UI-설계하기.md)
 - [Server state와 Query cache](../../01-학습문서/04-고급/08-server-state와-query-cache.md)
 - [useEffectEvent와 비반응 로직](../../01-학습문서/04-고급/09-useEffectEvent와-비반응-로직.md)
+- [Form Action과 useActionState](../../01-학습문서/04-고급/10-form-action과-useActionState.md)
 
 ## 실행 명령
 
@@ -50,6 +51,7 @@ pnpm run 미리보기:고급
 | Transition | urgent state와 transition state | 사용자가 즉시 봐야 하는 update는 무엇인가? |
 | Optimistic UI | optimistic item, pending 상태, 실패 복구 | 서버 실패 후 사용자가 현재 상태를 이해할 수 있는가? |
 | Error Boundary | boundary 위치, reset 버튼 | 오류가 전체 앱이 아니라 기능 단위로 격리되는가? |
+| Form Action | 제출 state, pending 버튼, validation message | form 제출 결과를 Action 흐름으로 설명할 수 있는가? |
 
 ## 직접 바꿔볼 것
 
@@ -64,6 +66,7 @@ pnpm run 미리보기:고급
 - Error Boundary가 잡는 오류와 잡지 못하는 오류를 구분합니다.
 - 같은 서버 데이터를 여러 컴포넌트가 요청한다면 query cache가 필요한지 판단합니다.
 - Effect dependency를 줄이고 싶을 때 구조 변경과 `useEffectEvent` 중 무엇이 맞는지 비교합니다.
+- form 제출을 `onSubmit`으로 처리하는 방식과 `useActionState`로 처리하는 방식을 비교합니다.
 
 ## 확장 과제
 
@@ -74,6 +77,7 @@ pnpm run 미리보기:고급
 | transition pending 상태를 skeleton 대신 작은 status text로 변경 | pending UI의 범위를 의식하는 연습 |
 | optimistic 실패 시 toast 대신 항목 옆 error 상태 표시 | 실패 복구를 사용자 행동과 연결 |
 | Error Boundary를 예제 전체와 작은 섹션에 각각 적용 | 오류 격리 범위 비교 |
+| `useFormStatus`로 submit 버튼을 별도 컴포넌트로 분리 | form 내부 pending 상태를 props 없이 읽는 연습 |
 
 ## 설명 질문
 
@@ -81,3 +85,4 @@ pnpm run 미리보기:고급
 - reducer를 쓰면 코드가 늘어나는데도 선택할 만한 기준은 무엇인가?
 - Context가 필요한 값과 props로 충분한 값은 어떻게 구분하는가?
 - optimistic update가 적합하지 않은 사용자 행동은 무엇인가?
+- `useActionState`가 기존 `onSubmit` 패턴보다 유용해지는 조건은 무엇인가?

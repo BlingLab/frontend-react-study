@@ -13,6 +13,8 @@
 - [Custom Hook 심화](../../01-학습문서/05-심화/08-custom-hook-심화.md)
 - [TypeScript와 React 패턴](../../01-학습문서/05-심화/09-타입스크립트와-리액트-패턴.md)
 - [심화 복습 시나리오](../../01-학습문서/05-심화/10-심화-복습-시나리오.md)
+- [React 19 이후 학습 지도](../../01-학습문서/05-심화/11-react-19-이후-학습지도.md)
+- [Server Components와 경계](../../01-학습문서/05-심화/12-server-components와-경계.md)
 
 ## 실행 명령
 
@@ -49,6 +51,8 @@ pnpm run 미리보기:심화
 | Advanced Hooks | `useOnlineStatus` | React 바깥 브라우저 이벤트를 어떻게 구독하는가? |
 | TypeScript Patterns | discriminated union | 불가능한 UI 상태 조합이 타입으로 막히는가? |
 | TypeScript Patterns | generic component | 데이터 모양은 달라도 반복되는 UI 구조를 재사용하는가? |
+| React 19 이후 지도 | 안정 API, 프레임워크 API, Canary API | 지금 프로젝트에서 직접 연습할 수 있는 API인가? |
+| Server Components와 경계 | client/server 실행 위치 | 이 코드는 브라우저 번들에 들어가야 하는가? |
 
 ## 직접 바꿔볼 것
 
@@ -80,3 +84,5 @@ pnpm run 미리보기:심화
 - `useMemo`를 추가하기 전에 어떤 증거가 필요한가?
 - Custom Hook은 재사용 말고 어떤 장점을 주는가?
 - TypeScript union으로 loading/error/success를 나누면 boolean 여러 개보다 무엇이 좋아지는가?
+- React 19 이후 API를 볼 때 안정 API와 Canary API를 어떻게 구분하는가?
+- `"use client"`와 `"use server"`가 각각 무엇을 표시하는지 설명할 수 있는가?

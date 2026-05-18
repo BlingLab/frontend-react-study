@@ -14,6 +14,8 @@
 8. [Custom Hook 심화](./08-custom-hook-심화.md)
 9. [TypeScript와 React 패턴](./09-타입스크립트와-리액트-패턴.md)
 10. [심화 복습 시나리오](./10-심화-복습-시나리오.md)
+11. [React 19 이후 학습 지도](./11-react-19-이후-학습지도.md)
+12. [Server Components와 경계](./12-server-components와-경계.md)
 
 ## 이 단계의 목표
 
@@ -29,6 +31,8 @@
 - Compiler가 줄여주는 일과 여전히 개발자가 설계해야 하는 일을 구분합니다.
 - Custom Hook으로 상태 로직을 추출하고 재사용합니다.
 - TypeScript로 컴포넌트 타입을 설계하고 discriminated union으로 상태를 표현합니다.
+- React 19 이후의 Action, Compiler, Server Components, Canary API를 학습 우선순위에 맞게 분류합니다.
+- Server Component, Client Component, Server Function의 실행 경계를 구분합니다.
 
 ## 외부 자료 기준의 분류
 
@@ -46,6 +50,8 @@ React API Reference와 Compiler 문서는 성능 최적화를 "기본 습관"이
 | 순수성 | render는 계산만 하고 외부 변경은 Effect나 event handler로 보냅니다. |
 | Custom Hook | 상태 로직을 컴포넌트에서 추출하고 재사용합니다. |
 | TypeScript 패턴 | discriminated union, generic, Context 타입으로 안전한 컴포넌트를 만듭니다. |
+| React 19 이후 지도 | 안정 API, 프레임워크 연계 API, Canary API를 구분합니다. |
+| Server Components | 서버 실행 코드와 클라이언트 상호작용 경계를 분리합니다. |
 
 심화에서는 "최적화를 많이 하는 사람"보다 "최적화가 필요한 상황을 증명할 수 있는 사람"을 목표로 합니다.
 
@@ -89,3 +95,5 @@ const handleClick = useCallback(() => onSelect(id), [id, onSelect]);
 | 최적화 코드가 많음 | 실제 병목을 측정했는가 | 불필요한 memoization 제거, Compiler 도입 검토 |
 | 타입 오류가 런타임에 발생 | props 타입이 명확한가 | discriminated union, generic, 런타임 검증 |
 | Hook 로직이 여러 컴포넌트에 중복 | 같은 패턴이 두 곳 이상인가 | Custom Hook으로 추출 |
+| 새 React API가 헷갈림 | 안정 API인가, 프레임워크 API인가, Canary API인가 | React 19 이후 학습 지도 |
+| RSC 글을 읽다 헷갈림 | Server Component인가, Client Component인가, Server Function인가 | Server Components와 경계 |

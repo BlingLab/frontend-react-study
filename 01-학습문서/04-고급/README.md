@@ -13,6 +13,7 @@
 7. [Optimistic UI 설계하기](./07-optimistic-UI-설계하기.md)
 8. [Server state와 Query cache](./08-server-state와-query-cache.md)
 9. [useEffectEvent와 비반응 로직](./09-useEffectEvent와-비반응-로직.md)
+10. [Form Action과 useActionState](./10-form-action과-useActionState.md)
 
 ## 이 단계의 목표
 
@@ -26,6 +27,7 @@
 - optimistic update가 실패했을 때 복구 흐름까지 설계합니다.
 - 서버에서 온 데이터는 local UI state와 다른 규칙으로 다룹니다.
 - Effect 안에서 반응해야 하는 로직과 최신 값만 읽어야 하는 로직을 분리합니다.
+- React 19의 form action, `useActionState`, `useFormStatus`로 제출 중 UI를 설계합니다.
 
 ## 외부 자료 기준의 분류
 
@@ -41,6 +43,7 @@ React 공식 문서의 Scaling Up with Reducer and Context, Full Stack Open의 s
 | Error Boundary | 렌더링 오류를 기능 단위로 격리합니다. |
 | server state cache | 서버 데이터의 stale, refetch, 중복 요청 문제를 다룹니다. |
 | optimistic UI | 실패 복구까지 포함해 빠른 사용자 피드백을 설계합니다. |
+| form action | 제출, pending, 성공/실패 state를 하나의 Action 흐름으로 봅니다. |
 
 고급 단계에서는 "어떤 라이브러리를 쓸까"보다 "이 상태가 어떤 종류인가"를 먼저 판단합니다. 도구 선택은 상태 분류 이후에 따라옵니다.
 
@@ -66,6 +69,8 @@ React 공식 문서의 Scaling Up with Reducer and Context, Full Stack Open의 s
 | `useTransition` | 일부 업데이트를 transition으로 표시 |
 | `useSyncExternalStore` | React 바깥 store 구독 |
 | `useEffectEvent` | Effect 안의 비반응 로직 분리 |
+| `useActionState` | Action 결과와 pending state 관리 |
+| `useOptimistic` | pending 동안 임시 optimistic state 표시 |
 
 Hook은 컴포넌트 또는 custom Hook의 top level에서 호출합니다. 조건문, 반복문, 중첩 함수 안에서는 호출하지 않습니다.
 
@@ -83,3 +88,4 @@ Custom Hook 이름은 `use`로 시작합니다.
 | Server state | 게시글 목록, 검색 결과, 사용자 상세 | query cache 도구 |
 | External store | 브라우저 상태, non-React store | `useSyncExternalStore` |
 | Optimistic state | 좋아요 pending, 댓글 임시 추가 | `useOptimistic`, transition |
+| Form action state | 제출 결과, validation message | `useActionState`, `useFormStatus` |
